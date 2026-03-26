@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'web_app_one',
+    'moto_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
