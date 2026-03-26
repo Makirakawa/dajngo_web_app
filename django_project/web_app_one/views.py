@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.urls import reverse
 
 auto_dict = {
     'Bmw': "[auto_list] --> [BMW] Немецкий премиум-бренд (основан в 1916). Известен спортивным характером, качественной управляемостью и технологиями. Популярен в сегменте бизнес и люкс.",
@@ -12,11 +13,23 @@ auto_dict = {
     'Audi': "[auto_list] --> [Audi] Немецкий премиум-бренд (с 1909). Известен технологиями (quattro), современным дизайном и комфортом.",
 }
 
+def index(request):
+    autos = list(auto_dict)
+    li_elements = ''
+    for auto in autos:
+        redirect_path = reverse("auto_list_name", args=[auto])
+        li_elements += f"<li><a href='{redirect_path}'>{auto.title()}</a></li>"
+    response = f"""
+    <ul>
+    {li_elements}
+    </ul>
+    """
+    return HttpResponse(response)
 
 def get_info_about_cars(request, about_cars: str):
     description = auto_dict.get(about_cars, None)
     if description:
-        return HttpResponse(description)
+        return HttpResponse(f'<h2>{description}</h2>')
     else:
         return HttpResponseNotFound(f"Автомобиль с названием {about_cars} мы еще не добавили((")
 
@@ -27,4 +40,5 @@ def get_info_about_cars_by_number(request, about_cars: int):
         return HttpResponseNotFound(f"Автомобиль по номеру {about_cars} не обнаружен")
 
     name_auto = autos[about_cars - 1]
-    return HttpResponseRedirect(f"/auto_list/{name_auto}")
+    redirect_url = reverse("auto_list_name", args=(name_auto,))
+    return HttpResponseRedirect(redirect_url)
