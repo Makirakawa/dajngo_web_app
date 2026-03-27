@@ -18,13 +18,14 @@ def index(request):
     li_elements = ''
     for auto in autos:
         redirect_path = reverse("auto_list_name", args=[auto])
-        li_elements += f"<li><a href='{redirect_path}'>{auto.title()}</a></li>"
+        li_elements = f"<li><h2><a href='{redirect_path}'>{auto.title()}</a></h2></li>"
     response = f"""
     <ul>
     {li_elements}
     </ul>
     """
     return HttpResponse(response)
+
 
 def get_info_about_cars(request, about_cars: str):
     description = auto_dict.get(about_cars, None)
@@ -38,7 +39,8 @@ def get_info_about_cars_by_number(request, about_cars: int):
     autos = list(auto_dict)
     if about_cars > len(autos):
         return HttpResponseNotFound(f"Автомобиль по номеру {about_cars} не обнаружен")
-
     name_auto = autos[about_cars - 1]
     redirect_url = reverse("auto_list_name", args=(name_auto,))
     return HttpResponseRedirect(redirect_url)
+
+
