@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
+from dataclasses import dataclass
 
 moto_dict = {
     'Honda': "[moto_list] --> [Honda] Японская компания (с 1948). Крупнейший производитель мотоциклов в мире. Надёжные и доступные модели от скутеров до спортбайков CBR.",
@@ -15,6 +16,7 @@ moto_dict = {
     'Royal Enfield': "[moto_list] --> [Royal Enfield] Старейший действующий бренд (с 1901). Ретро-стиль и круизеры. Bullet выпускается с 1932 года. Лидер в Азии.",
 }
 
+
 def index(request):
     motos = list(moto_dict)
     li_elements = ''
@@ -27,6 +29,7 @@ def index(request):
     </ul>
     """
     return HttpResponse(response)
+
 
 def get_info_about_moto(request, about_moto: str):
     description = moto_dict.get(about_moto, None)
@@ -41,5 +44,45 @@ def get_info_about_moto_by_number(request, about_moto: int):
     if about_moto > len(motos):
         return HttpResponseNotFound(f"Мотоцикл под номером {about_moto} мы не смогли найти (( ")
     name_moto = motos[about_moto - 1]
-    redirect = reverse("moto_list_name", args=(about_moto,))
+    redirect = reverse("moto_list_name", args=(name_moto,))
     return HttpResponseRedirect(redirect)
+
+
+@dataclass
+class MotorcycleBrand:
+    name: str
+    description: str
+    body_type: str
+
+
+brands = [
+    MotorcycleBrand("Honda", "описание Honda", "sport"),
+    MotorcycleBrand("Yamaha", "описание Yamaha", "sport"),
+    MotorcycleBrand("Harley-Davidson", "описание Harley", "cruiser"),
+    MotorcycleBrand("BMW Motorrad", "описание BMW", "touring"),
+    MotorcycleBrand("KTM", "описание KTM", "enduro"),
+]
+
+
+def body_list(request):
+    body_types = sorted(set(brand.body_type for brand in brands))
+
+    li_elenets = ''
+    for body in body_types:
+        url = reverse("moto:body_detail", args=[body])
+        li_elenets += f"<li><h2><a href={url}>{body}</a></h2></li>"
+
+    return HttpResponse(li_elenets)
+
+
+def body_detail(request, body_type: str):
+    filtered = [brand for brand in brands if brand.body_type == body_type]
+
+    if not filtered:
+        return HttpResponseNotFound("Нет мотоцикла с таким фильтром")
+
+    li_elenets = ''
+    for brand in filtered:
+        li_elenets += f"<li>{brand.name}</li>"
+
+    return HttpResponse(f"<h1>{body_type}</h1><ul>{li_elenets}</ul>")

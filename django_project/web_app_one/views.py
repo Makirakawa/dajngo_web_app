@@ -13,12 +13,13 @@ auto_dict = {
     'Audi': "[auto_list] --> [Audi] Немецкий премиум-бренд (с 1909). Известен технологиями (quattro), современным дизайном и комфортом.",
 }
 
+
 def index(request):
     autos = list(auto_dict)
     li_elements = ''
     for auto in autos:
         redirect_path = reverse("auto_list_name", args=[auto])
-        li_elements = f"<li><h2><a href='{redirect_path}'>{auto.title()}</a></h2></li>"
+        li_elements += f"<li><h2><a href='{redirect_path}'>{auto.title()}</a></h2></li>"
     response = f"""
     <ul>
     {li_elements}
@@ -42,5 +43,3 @@ def get_info_about_cars_by_number(request, about_cars: int):
     name_auto = autos[about_cars - 1]
     redirect_url = reverse("auto_list_name", args=(name_auto,))
     return HttpResponseRedirect(redirect_url)
-
-
