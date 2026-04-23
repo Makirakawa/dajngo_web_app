@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if title %}{{ title }}{% else %}Моя страница{% endif %}</title>
+</head>
+<body>
+    <h1>{% if title %}{{ title }}{% else %}Добро пожаловать{% endif %}</h1>
+    <p>Имя: {{ name }}</p>
+    <p>Возраст: {{ age }}</p>
+</body>
+</html>
